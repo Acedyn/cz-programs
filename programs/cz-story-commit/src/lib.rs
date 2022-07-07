@@ -45,14 +45,14 @@ pub mod cz_story_commit {
         ctx: Context<InitializeCommit>,
         bump: u8,
 
-        background: u64,
-        body: u64,
-        clothes: u64,
-        head: u64,
-        insidehead: u64,
-        eyes: u64,
-        mouths: u64,
-        hats: u64,
+        background: u8,
+        body: u8,
+        clothes: u8,
+        head: u8,
+        insidehead: u8,
+        eyes: u8,
+        mouths: u8,
+        hats: u8,
     ) -> Result<()> {
         let user = &ctx.accounts.user;
         let bank_account = &ctx.accounts.bank_account;
@@ -60,11 +60,11 @@ pub mod cz_story_commit {
         let nft_token_account = &ctx.accounts.nft_token_account;
         check_context_validity(user, nft_mint_account, nft_token_account);
 
-        // Extract a service 'fee' of 5 lamports for performing this instruction
+        // Extract a service 'fee' for performing this instruction
         transfer_lamports(
             &bank_account.to_account_info(),
             &user.to_account_info(),
-            1_000_000_000u64,
+            100_000_000u64,
         )?;
 
         let commit_account = &mut ctx.accounts.commit_account;
@@ -84,14 +84,14 @@ pub mod cz_story_commit {
 
     pub fn commit_story(
         ctx: Context<Commit>,
-        background: u64,
-        body: u64,
-        clothes: u64,
-        head: u64,
-        insidehead: u64,
-        eyes: u64,
-        mouths: u64,
-        hats: u64,
+        background: u8,
+        body: u8,
+        clothes: u8,
+        head: u8,
+        insidehead: u8,
+        eyes: u8,
+        mouths: u8,
+        hats: u8,
     ) -> Result<()> {
         let user = &ctx.accounts.user;
         let nft_mint_account = &ctx.accounts.nft_mint_account;
@@ -119,8 +119,11 @@ pub struct InitializeBank<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
-    #[account(init, seeds = [b"bank_v04".as_ref()], bump, payer = user, space=10)]
+    #[account(init, seeds = [b"bank_v06".as_ref()], bump, payer = user, space=10)]
     pub bank_account: Account<'info, Bank>,
+
+    // The system program is required to create the account
+    pub system_program: Program<'info, System>,
 
     // The system program is required to create the account
     pub system_program: Program<'info, System>,
@@ -142,7 +145,7 @@ pub struct InitializeCommit<'info> {
     pub bank_account: Account<'info, Bank>,
 
     // The account that is going to be created as a PDA
-    #[account(init, seeds = [b"commit_v04".as_ref(), nft_mint_account.key().as_ref()], bump, payer = user, space=8+80)]
+    #[account(init, seeds = [b"commit_v06".as_ref(), nft_mint_account.key().as_ref()], bump, payer = user, space=8+80)]
     pub commit_account: Account<'info, CommitState>,
 
     // The system program is required to create the account
@@ -165,14 +168,14 @@ pub struct Commit<'info> {
 #[account]
 #[derive(Default)]
 pub struct CommitState {
-    pub background: u64,
-    pub body: u64,
-    pub clothes: u64,
-    pub head: u64,
-    pub insidehead: u64,
-    pub eyes: u64,
-    pub mouths: u64,
-    pub hats: u64,
+    pub background: u8,
+    pub body: u8,
+    pub clothes: u8,
+    pub head: u8,
+    pub insidehead: u8,
+    pub eyes: u8,
+    pub mouths: u8,
+    pub hats: u8,
     pub bump: u8,
 }
 
